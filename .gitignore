@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+
+# Env / secrets
+.env
+
+# Pipeline outputs (regenerable; don't commit scraped data or model weights)
+output/raw/*.jsonl
+output/raw/*.checkpoint.json
+output/raw/manual/*.jsonl
+output/cleaned/*.jsonl
+output/cleaned/statistics.json
+output/datasets/
+output/checkpoints/
+output/eval/
+output/logs/
+!output/raw/.gitkeep
+!output/cleaned/.gitkeep
+!output/datasets/.gitkeep
+
+# OS
+.DS_Store

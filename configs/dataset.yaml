@@ -1,0 +1,46 @@
+# Dataset build & Hugging Face publishing configuration.
+
+dataset:
+  name: "bisaya-cebuano-dictionary"
+  hf_repo_id: "YOUR_HF_USERNAME/bisaya-cebuano-dictionary"
+  private_by_default: true      # keep True until PERMISSION_NOTES is filled in and verified
+  version: "0.1.0"
+  languages: ["ceb", "en"]
+  license: "unclear-see-LEGAL_NOTICE"   # do NOT set to cc-by/mit/etc until rights are confirmed
+  description: >
+    A Cebuano (Bisaya) <-> English lexical dataset assembled from openly
+    accessible dictionary sources, cleaned and validated for NLP use.
+  citation: |
+    @misc{bisaya_llm_dataset,
+      title  = {Open Cebuano (Bisaya) NLP Dataset},
+      author = {YOUR_NAME_OR_ORG},
+      year   = {2026},
+      url    = {https://huggingface.co/datasets/YOUR_HF_USERNAME/bisaya-cebuano-dictionary}
+    }
+
+  # Filled in only once you have written confirmation from a rights holder.
+  # upload_dataset.py refuses to set private=false without this populated.
+  PERMISSION_NOTES: ""
+
+splits:
+  train: 0.9
+  validation: 0.05
+  test: 0.05
+  seed: 42
+
+quality_filters:
+  min_word_chars: 1
+  max_word_chars: 60
+  min_definition_chars: 2
+  require_translation: true
+  drop_duplicate_words: true
+  drop_html_leftovers: true
+
+instruction_dataset:
+  output_name: "bisaya-instruction-tuning"
+  hf_repo_id: "YOUR_HF_USERNAME/bisaya-instruction-tuning"
+  templates_per_entry: 6
+  include_reverse_translation: true
+  include_example_sentence_tasks: true
+  include_fill_in_blank: true
+  shuffle_seed: 42

@@ -1,0 +1,48 @@
+# Scraper configuration.
+# See docs/LEGAL_NOTICE.md before changing any `enabled` flag to true.
+
+global:
+  user_agent: "BisayaLLMResearchBot/0.1 (+https://github.com/YOUR_ORG/bisaya-llm; research/educational use; contact: YOUR_EMAIL)"
+  respect_robots_txt: true          # hard-enforced in code regardless of this flag
+  personal_research_only: true      # gates any HF dataset push, see huggingface/upload_dataset.py
+  default_delay_seconds: 2.0        # min delay between requests to the same host
+  max_delay_seconds: 5.0            # ceiling for exponential backoff jitter
+  max_concurrent_requests: 2
+  timeout_seconds: 20
+  max_retries: 4
+  checkpoint_every: 25              # entries between checkpoint file writes
+  raw_output_dir: "output/raw"
+  log_dir: "output/logs"
+
+sources:
+  talkbisaya:
+    enabled: true
+    base_url: "https://www.talkbisaya.com"
+    listing_url: "https://www.talkbisaya.com/dictionary"
+    entry_url_template: "https://www.talkbisaya.com/dictionary/{slug}"
+    rate_limit_seconds: 3.0
+    max_pages: null              # null = discover from pagination
+    license_note: "ToS restricts use to personal, non-commercial, educational purposes; redistribution for commercial purposes is explicitly forbidden. Public redistribution beyond personal use is unclear -> permission required before HF push."
+
+  binisaya:
+    enabled: false                # DISABLED: content derives from Wolff (1972), see docs/LEGAL_NOTICE.md
+    base_url: "https://www.binisaya.com"
+    listing_url: "https://www.binisaya.com/cebuano/"
+    entry_url_template: "https://www.binisaya.com/cebuano/{slug}"
+    rate_limit_seconds: 3.0
+    max_pages: null
+    license_note: "Site states data wraps John U. Wolff's 'A Dictionary of Cebuano Visayan' (1972), a third-party copyrighted academic work. Do not redistribute without publisher permission."
+
+  pinoydictionary:
+    enabled: false                # DISABLED: appears to reproduce the same Wolff (1972) content
+    base_url: "https://cebuano.pinoydictionary.com"
+    listing_url: "https://cebuano.pinoydictionary.com/"
+    entry_url_template: "https://cebuano.pinoydictionary.com/word/{slug}/"
+    rate_limit_seconds: 3.0
+    max_pages: null
+    license_note: "Entry structure/content matches Wolff (1972). Do not redistribute without permission."
+
+  manual:
+    enabled: true
+    description: "Bypass scraping entirely: drop hand-compiled or permissively-licensed JSONL files into output/raw/manual/ using the RawEntry schema in parser/parser.py."
+    raw_dir: "output/raw/manual"

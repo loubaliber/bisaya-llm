@@ -1,0 +1,68 @@
+# Unsloth + LoRA/QLoRA fine-tuning configuration.
+# Any Unsloth-compatible causal LM can be dropped in via `model.base_model_id`.
+
+model:
+  base_model_id: "unsloth/Meta-Llama-3.1-8B-Instruct-bnb-4bit"  # swap freely
+  max_seq_length: 2048
+  load_in_4bit: true
+  dtype: null                 # null = auto-detect (bf16 if supported, else fp16)
+
+lora:
+  r: 16
+  lora_alpha: 16
+  lora_dropout: 0.0
+  bias: "none"
+  mlx_num_layers: 16    # MLX backend only: number of transformer layers to attach LoRA to
+  target_modules:
+    - q_proj
+    - k_proj
+    - v_proj
+    - o_proj
+    - gate_proj
+    - up_proj
+    - down_proj
+  use_gradient_checkpointing: "unsloth"
+  random_state: 42
+  use_rslora: false
+  loftq_config: null
+
+data:
+  train_dataset_id: "YOUR_HF_USERNAME/bisaya-instruction-tuning"
+  train_split: "train"
+  eval_split: "validation"
+  prompt_field: "instruction"
+  input_field: "input"
+  output_field: "output"
+  packing: false
+
+training_args:
+  output_dir: "output/checkpoints"
+  per_device_train_batch_size: 2
+  gradient_accumulation_steps: 8
+  warmup_ratio: 0.03
+  num_train_epochs: 3
+  learning_rate: 2.0e-4
+  fp16: false                 # set true if bf16 unsupported on target GPU
+  bf16: true
+  logging_steps: 10
+  optim: "adamw_8bit"
+  weight_decay: 0.01
+  lr_scheduler_type: "cosine"
+  seed: 42
+  save_strategy: "steps"
+  save_steps: 100
+  save_total_limit: 3
+  eval_strategy: "steps"
+  eval_steps: 100
+  resume_from_checkpoint: null   # path to resume, or null
+  mlx_iters: 1000                # MLX backend only: mlx_lm.lora is step-driven, not epoch-driven
+
+flash_attention: "auto"          # auto | true | false
+
+output:
+  save_adapter_dir: "output/checkpoints/lora_adapter"
+  save_merged_dir: "output/checkpoints/merged_model"
+  merge_and_save_16bit: true
+  push_adapter_to_hub: false     # flip once trained + reviewed
+  push_merged_to_hub: false
+  hub_repo_id: "YOUR_HF_USERNAME/bisaya-llama3.1-8b-lora"
